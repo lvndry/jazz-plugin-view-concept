@@ -1,0 +1,12 @@
+#!/bin/sh
+# Runs the view-concept command, installing it with uv on first use.
+source="${VIEW_CONCEPT_SOURCE:-git+https://github.com/Vaillus/view-concept}"
+if ! command -v uv >/dev/null 2>&1; then
+  echo "view-concept needs uv: https://docs.astral.sh/uv/getting-started/installation/" >&2
+  exit 127
+fi
+binary="$(uv tool dir --bin)/view-concept"
+if [ ! -x "$binary" ]; then
+  uv tool install --quiet "$source" >&2 || exit 1
+fi
+exec "$binary" "$@"

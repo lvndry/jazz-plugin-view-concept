@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "io.github.lvndry.view-concept",
+  "name": "view-concept",
+  "version": "0.1.0",
+  "hostApi": 1,
+  "entry": "src/index.ts",
+  "hooks": [],
+  "decisionProviders": [],
+  "tools": [],
+  "commands": [
+    {
+      "name": "view-concept",
+      "description": "Explain a concept in a local web page where you comment on passages"
+    },
+    {
+      "name": "view-branch",
+      "description": "Review a branch in the page: concepts first, then the code against them"
+    },
+    {
+      "name": "view-refactor",
+      "description": "Triage existing code in the page, then restructure it"
+    }
+  ],
+  "personas": [],
+  "skills": [],
+  "lifecycleHooks": ["session-start", "user-prompt"],
+  "network": { "destinations": [] },
+  "dataSent": [],
+  "secrets": []
+}
