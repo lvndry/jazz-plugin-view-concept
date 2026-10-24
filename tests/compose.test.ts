@@ -1,27 +1,38 @@
 import { describe, expect, test } from "bun:test";
+import { existsSync, readFileSync } from "node:fs";
+import { join, resolve } from "node:path";
 
-import { composeMessage, isViewCommand, stripFrontmatter } from "../src/compose.ts";
+import { COMMANDS, composeMessage, isViewCommand, stripFrontmatter } from "../src/compose.ts";
 
+const ROOT = resolve(import.meta.dir, "..");
 const skillText = (name: string): string => `body of ${name}`;
 
 describe("composeMessage", () => {
-  test("view-refactor brings the skills it builds on, in reading order", () => {
+  test("hands over only the command's own skill", () => {
     const message = composeMessage({
-      command: "view-refactor",
-      args: ["src/store"],
+      command: "build-feature",
+      args: ["feat/x"],
       root: "/plugins/vc",
       agentId: "agent-1",
       readSkillText: skillText,
     });
-    const order = ["view-refactor", "view-concept", "view-branch", "explain-concept"].map((name) =>
-      message.indexOf(`<skill name="${name}">`),
-    );
-    expect(order.every((index) => index >= 0)).toBe(true);
-    expect([...order].sort((first, second) => first - second)).toEqual(order);
-    expect(message).toEndWith("Request: src/store");
+    expect(message).toContain('<skill name="build-feature">\nbody of build-feature\n</skill>');
+    expect(message.match(/<skill name=/g)?.length).toBe(1);
+    expect(message).toEndWith("Request: feat/x");
   });
 
-  test("names the CLI path and the Jazz agent", () => {
+  test("points the checkout path the skills expect at the vendored copy", () => {
+    const message = composeMessage({
+      command: "review-docs",
+      args: [],
+      root: "/plugins/vc",
+      agentId: "agent-1",
+      readSkillText: () => "Read `~/Documents/code/view-concept/skills/write-readme/SKILL.md`.",
+    });
+    expect(message).toContain("Read `/plugins/vc/vendor/skills/write-readme/SKILL.md`.");
+  });
+
+  test("page commands name the CLI path and the Jazz agent", () => {
     const message = composeMessage({
       command: "view-concept",
       args: ["KKT", "conditions"],
@@ -33,6 +44,18 @@ describe("composeMessage", () => {
     expect(message).toContain("--agent jazz --agent-name agent-1");
     expect(message).toContain("wait <slug> --timeout 30");
     expect(message).toContain("Request: KKT conditions");
+  });
+
+  test("terminal commands carry no page instructions", () => {
+    const message = composeMessage({
+      command: "write-readme",
+      args: ["benchmark/"],
+      root: "/plugins/vc",
+      agentId: "agent-1",
+      readSkillText: skillText,
+    });
+    expect(message).not.toContain("bin/view-concept");
+    expect(message).not.toContain("wait_for");
   });
 
   test("falls back to asking when nothing was typed or the agent is unknown", () => {
@@ -55,7 +78,17 @@ describe("stripFrontmatter", () => {
   });
 });
 
-test("isViewCommand accepts only the three commands", () => {
-  expect(isViewCommand("view-branch")).toBe(true);
-  expect(isViewCommand("help")).toBe(false);
+test("isViewCommand accepts only the declared commands", () => {
+  expect(isViewCommand("build-feature")).toBe(true);
+  expect(isViewCommand("view-branch")).toBe(false);
+});
+
+test("the manifest declares every command, and each has a vendored skill", () => {
+  const manifest = JSON.parse(readFileSync(join(ROOT, "jazz-plugin.json"), "utf8")) as {
+    commands: { name: string }[];
+  };
+  expect(manifest.commands.map((command) => command.name).sort()).toEqual([...COMMANDS].sort());
+  for (const command of COMMANDS) {
+    expect(existsSync(join(ROOT, "vendor", "skills", command, "SKILL.md"))).toBe(true);
+  }
 });

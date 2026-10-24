@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "io.github.lvndry.view-concept",
   "name": "view-concept",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "hostApi": 1,
   "entry": "src/index.ts",
   "hooks": [],
@@ -14,18 +14,35 @@
       "description": "Explain a concept in a local web page where you comment on passages"
     },
     {
-      "name": "view-branch",
-      "description": "Review a branch in the page: concepts first, then the code against them"
+      "name": "build-feature",
+      "description": "Build a feature in the page, concepts first: model, code, check, docs, PR"
     },
     {
-      "name": "view-refactor",
+      "name": "triage-code",
       "description": "Triage existing code in the page, then restructure it"
+    },
+    {
+      "name": "review-docs",
+      "description": "Review a repo's docs on a scope in the page, then open a PR"
+    },
+    {
+      "name": "write-readme",
+      "description": "Write or fix a folder's README from its code, in the terminal"
+    },
+    {
+      "name": "explain-concept",
+      "description": "Explain a concept in the terminal, with no page"
     }
   ],
   "personas": [],
   "skills": [],
-  "lifecycleHooks": ["session-start", "user-prompt"],
-  "network": { "destinations": [] },
+  "lifecycleHooks": [
+    "session-start",
+    "user-prompt"
+  ],
+  "network": {
+    "destinations": []
+  },
   "dataSent": [],
   "secrets": []
 }
