@@ -1,15 +1,18 @@
 # jazz-plugin-view-concept
 
-A community [Jazz](https://github.com/lvndry/jazz) plugin that adds three slash commands for
+A community [Jazz](https://github.com/lvndry/jazz) plugin that adds the slash commands of
 [view-concept](https://github.com/Vaillus/view-concept), a local web page where the agent writes
 explanations and code reviews and you comment on passages:
 
 - `/view-concept <concept>` — explain a concept in the page.
-- `/view-branch [branch]` — review a branch: concepts first, then the code against them.
-- `/view-refactor <code>` — triage existing code, then restructure it.
+- `/build-feature [branch]` — build a feature concepts first: model, code, check, docs, PR.
+- `/triage-code <code>` — triage existing code, then restructure it.
+- `/review-docs <scope>` — bring a repo's docs up to date, on a docs branch of its own.
+- `/write-readme <folder>` — write or fix a folder's README, in the terminal.
+- `/explain-concept <concept>` — explain a concept in the terminal, with no page.
 
 The plugin is not part of Jazz. It contains no server: each command hands the agent the matching
-skill (a copy of view-concept's `skills/`) and the path of `bin/view-concept`, which installs the
+skill (a copy of view-concept's `skills/`, in `vendor/`) and the path of `bin/view-concept`, which installs the
 `view-concept` command with [uv](https://docs.astral.sh/uv/) on first use. The agent runs it, opens
 the page, and listens for your comments with `wait_for`.
 
@@ -43,6 +46,7 @@ uv tool upgrade view-concept                         # the page and CLI
 ```
 
 To refresh the bundled skills from a view-concept checkout: `sh scripts/sync-skills.sh <checkout>`.
+`vendor/UPSTREAM_COMMIT` records the commit they came from.
 
 ## Development
 

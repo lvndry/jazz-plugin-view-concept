@@ -1,7 +1,7 @@
 /**
- * Jazz plugin for view-concept: `/view-concept`, `/view-branch` and `/view-refactor` hand the
- * agent the matching skill from this repository's `skills/` and the path of its `bin/` shim, so
- * the web page works from Jazz with `uv` as the only prerequisite.
+ * Jazz plugin for view-concept: each command hands the agent the matching skill from this
+ * repository's `vendor/skills/` and the path of its `bin/` shim, so the web page works from Jazz
+ * with `uv` as the only prerequisite.
  */
 
 import { dirname, resolve } from "node:path";
@@ -33,7 +33,7 @@ const plugin: JazzPluginModule = {
             return { message: composeMessage({ command, args, root: ROOT, agentId }) };
           } catch {
             return {
-              message: `/${command} cannot find its skills under ${ROOT}. Tell the user to reinstall the plugin from its source: jazz plugin add lvndry/jazz-plugin-view-concept`,
+              message: `/${command} cannot find its skill under ${ROOT}/vendor/skills. Tell the user to reinstall the plugin from its source: jazz plugin add lvndry/jazz-plugin-view-concept`,
             };
           }
         },
